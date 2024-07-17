@@ -1,0 +1,32 @@
+---
+title: "The Intriduction of R programs"
+output: pdf_document
+date: "2024-07-16"
+---
+
+"HelperFunctions.R" is a set of simple functions, including the expit function, the deviation of the expit function, the normal kernel function, the time-dependent covariate function, the cross-validation split function, the normalization function. I have also annotated in the R program.
+
+"Supervised_est.R" is the supervised method to estimate the survival function for the three different types of data, and for the combination estimation.
+
+"NewtonCLseh.R" is the optimization algorithm to estimate the intrinsic estimator for beta. 
+
+"Beta_estimate.R" is used to estimate semi-supervised estimator for beta, and to calculate the intrinsic estimator for beta by using the optimization algorithm.
+
+"CV_function.R" is the cross-validation method to estimate the survival function and variance of the intrinsic method of the the three different types of data, respectively. Also for calculating the semi-supervised combination estimator and the intrinsic combination estimator.
+
+"IntrSSL_est_ind.R: is utilized to obtain the intrinsic survival estimator at each fixed time point.
+
+"d011.R" is the self-consistent method to estimate the survival function at each fixed time point, from the "dblcens" R package.
+
+"Generatemimicreal.R" is used to generate the simulation data, which mimic real data.
+
+"GenerateCoxbtcor67.R", "GenerateCoxbtcor8.R", and "GenerateCoxtcor8.R" are used to generate the simulation data where the model for the survival time is a Cox model with time-dependent covariates and varying correlation between T and T*.
+
+"Generatelogtcor67.R", "Generatelogtcor81.R", and "Generatelogbtcor8.R" are used to generate the simulation data where the model for the survival time is a logistic model with time-dependent covariates and varying correlation between T and T*. 
+
+“example_mimic.R” is an example of the proposed estimation, supervised estimation, and existing self-consistent estimation using the data that mimic real data.
+
+“example_t.R” is an example of the proposed estimation, supervised estimation, and existing self-consistent estimation using data with time-dependent covariates.
+
+“example_bt.R” is an example of the proposed estimation, supervised estimation, and existing self-consistent estimation using data with both time-dependent covariates and time-independent covariates.
+
