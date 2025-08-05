@@ -18,6 +18,8 @@ date: "2024-07-16"
 
 "d011.R" is the self-consistent method to estimate the survival function at each fixed time point, from the "dblcens" R package.
 
+"Cox-SP-AFT.R" is the Cox-SP-AFT method to estimate the survival function and the bootstrap variance at each fixed time point, described in the paper A new semi-supervised learning model combined with Cox and SP-AFT models in cancer survival analysis. Chai et al.".
+
 "Generatemimicreal.R" is used to generate the simulation data, which mimic real data.
 
 "GenerateCoxbtcor67.R", "GenerateCoxbtcor8.R", and "GenerateCoxtcor8.R" are used to generate the simulation data where the model for the survival time is a Cox model with time-dependent covariates and varying correlation between T and T*.
