@@ -1,34 +1,148 @@
 ---
-title: "The Intriduction of R programs"
+title: "SEEDS: Semi-supervised Estimation of Event Rate with Doubly-censored Survival Data"
 output: pdf_document
-date: "2024-07-16"
+date: "2025-09-16"
 ---
 
-"HelperFunctions.R" is a set of simple functions, including the expit function, the deviation of the expit function, the normal kernel function, the time-dependent covariate function, the cross-validation split function, the normalization function. I have also annotated in the R program.
+# SEEDS: Semi-supervised Estimation of Event Rate with Doubly-censored Survival Data
 
-"Supervised_est.R" is the supervised method to estimate the survival function for the three different types of data, and for the combination estimation.
+This repository contains the R implementation of the **SEEDS** (Semi-supervised Estimation of Event Rate with Doubly-censored Survival Data) method, as described in the manuscript:
 
-"NewtonCLseh.R" is the optimization algorithm to estimate the intrinsic estimator for beta. 
+> Wang, Y., Zhou, Q., Cai, T., & Wang, X. (2025). *Semi-supervised Estimation of Event Rate with Doubly-censored Survival Data*. Submitted to the *Annals of Applied Statistics*.
 
-"Beta_estimate.R" is used to estimate semi-supervised estimator for beta, and to calculate the intrinsic estimator for beta by using the optimization algorithm.
+SEEDS is a novel semi-supervised method designed for estimating survival rates from doubly-censored survival data, commonly encountered in Electronic Health Records (EHR). It combines a small set of labeled observations (exact event times) with a larger set of unlabeled observations (surrogate proxies, e.g., diagnostic codes) to improve estimation efficiency. The method constructs three estimators (Direct, Left, Right) and optimally combines them using cross-validation, offering both semi-supervised and intrinsic versions for enhanced performance.
 
-"CV_function.R" is the cross-validation method to estimate the survival function and variance of the intrinsic method of the the three different types of data, respectively. Also for calculating the semi-supervised combination estimator and the intrinsic combination estimator.
+## Key Features
+- Handles doubly-censored data with time-dependent covariates and surrogate variables.
+- Implements semi-supervised and intrinsic estimators for Direct, Left, and Right censoring.
+- Uses cross-validation to determine optimal weights for combining estimators.
+- Provides variance estimation and confidence intervals.
+- Includes simulation scripts for Cox and logistic models with varying censoring rates and correlations.
+- Compares SEEDS against baseline methods: Classical Supervised Learning (CSL) and Self-Consistency (SC).
 
-"IntrSSL_est_ind.R: is utilized to obtain the intrinsic survival estimator at each fixed time point.
+## Installation
 
-"d011.R" is the self-consistent method to estimate the survival function at each fixed time point, from the "dblcens" R package.
+The code requires R (version 4.0 or higher). Install the necessary packages by running the following in R:
 
-"Cox-SP-AFT.R" is the Cox-SP-AFT method to estimate the survival function and the bootstrap variance at each fixed time point, described in the paper A new semi-supervised learning model combined with Cox and SP-AFT models in cancer survival analysis. Chai et al.".
+# Define required packages
+required_packages <- c(
+  "survival", "dplyr", "ggplot2", "tidyr", "parallel", 
+  "foreach", "doParallel", "knitr", "kableExtra", "gridExtra", 
+  "viridis", "mgcv", "splines", "dblcens", "pracma", "MASS",
+  "ncvreg"
+)
 
-"Generatemimicreal.R" is used to generate the simulation data, which mimic real data.
+# Install and load packages
+install_and_load_packages <- function(packages) {
+  for (pkg in packages) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      cat("Installing package:", pkg, "\n")
+      install.packages(pkg, dependencies = TRUE)
+    }
+    library(pkg, character.only = TRUE)
+  }
+}
 
-"GenerateCoxbtcor67.R", "GenerateCoxbtcor8.R", and "GenerateCoxtcor8.R" are used to generate the simulation data where the model for the survival time is a Cox model with time-dependent covariates and varying correlation between T and T*.
+install_and_load_packages(required_packages)
 
-"Generatelogtcor67.R", "Generatelogtcor81.R", and "Generatelogbtcor8.R" are used to generate the simulation data where the model for the survival time is a logistic model with time-dependent covariates and varying correlation between T and T*. 
+All dependencies are available on CRAN, ensuring straightforward setup.
 
-“example_mimic.R” is an example of the proposed estimation, supervised estimation, and existing self-consistent estimation using the data that mimic real data.
+Repository Structure
 
-“example_t.R” is an example of the proposed estimation, supervised estimation, and existing self-consistent estimation using data with time-dependent covariates.
+SEEDS/
+├── README.Rmd                 # This file
+├── main.R                     # Main simulation script for running comparisons
+├── src/
+    ├── utils/
+    │   ├── HelperFunctions.R  # Mathematical and utility functions (e.g., Expit, kernel smoothing)
+    │   └── CV_function.R      # Cross-validation for optimal estimator combination
+│   ├── estimation/
+│   │   ├── Beta_estimate.R    # Parameter estimation (semi-supervised and intrinsic)
+│   │   └── NewtonCLseh.R      # Newton-Raphson optimization with constraints
+│   ├── methods/
+│   │   ├── IntrSSL_est_ind.R  # SEEDS main estimation function
+│   │   ├── Supervised_est.R   # Classical Supervised Learning (CSL) method
+│   │   └── d011_new.R         # Self-Consistency (SC) method
+│   ├── simulation/
+│   │   ├── GenerateCoxtcor.R  # Cox model data generation
+│   │   └── Generatelogbtcor.R # Logistic model data generation
+├── data/
+│   └── simulation_results/    # Output directory for simulation results (auto-generated)
+└── docs/
+    └── Supplementary.pdf      # Supplementary materials (simulation details, results)
 
-“example_bt.R” is an example of the proposed estimation, supervised estimation, and existing self-consistent estimation using data with both time-dependent covariates and time-independent covariates.
+Usage
+
+Running Simulations
+
+The main.R script runs simulations to compare SEEDS, CSL, and SC across different settings (Cox/logistic models, varying censoring rates, and correlations). It generates data, performs estimations, and saves results in data/simulation_results/.
+
+To run simulations:
+
+# Set working directory to the repository root
+setwd("path/to/SEEDS")
+
+# Source all necessary scripts
+source("src/utils/HelperFunctions.R")
+source("src/estimation/Beta_estimate.R")
+source("src/estimation/NewtonCLseh.R")
+source("src/methods/Supervised_est.R")
+source("src/utils/CV_function.R")
+source("src/methods/IntrSSL_est_ind.R")
+source("src/methods/d011_new.R")
+source("src/simulation/Generatelogbtcor.R")
+source("src/simulation/GenerateCoxtcor.R")
+
+# Run the main simulation script
+source("main.R")  # Modify 'setting' (1 or 2) and 'seed' in main.R as needed
+
+Key Parameters (in main.R):
+setting: 1 (Cox model) or 2 (Logistic model).
+seed: Random seed for reproducibility.
+N: Number of unlabeled observations (default: 5000).
+n: Number of labeled observations (default: 250 for setting 1, 100 for setting 2).
+num_sims: Number of simulation replicates (default: 500).
+
+Output: Results are saved as .RData files (e.g., setting1seed1.RData) containing survival estimates, standard deviations, and combination weights for SEEDS, CSL, and SC.
+
+
+Applying SEEDS to Custom Data
+To apply SEEDS to your own doubly-censored dataset, use IntrSSL_est() from IntrSSL_est_ind.R:
+# Example usage
+result <- IntrSSL_est(
+  time = seq(0.5, 3.0, length.out = 50),  # Evaluation time points
+  base_cov = matrix(rnorm(1000 * 2), ncol = 2),  # Baseline covariates
+  cova_tim = your_time_dependent_times,  # List of time-dependent covariate times
+  cova_ct = your_time_dependent_values,  # List of time-dependent covariate values
+  lcen_ct = your_left_censoring_covariates,  # Left censoring covariates
+  rcen_ct = your_right_censoring_covariates,  # Right censoring covariates
+  xstar_all = your_surrogate_times,  # Surrogate observations
+  deltastar_indv = your_surrogate_indicators,  # Surrogate censoring indicators (2 columns)
+  label_id = your_labeled_indices,  # Indices of labeled observations
+  lcen_all = your_left_censoring_times,  # Left censoring times (all subjects)
+  rcen_all = your_right_censoring_times,  # Right censoring times (all subjects)
+  obse = your_observed_times,  # Observed survival times (labeled)
+  ldelt = your_left_indicators,  # Left censoring indicators
+  rdelt = your_right_indicators,  # Right censoring indicators
+  lh_labeled = 0.1,  # Left bandwidth for labeled data
+  lh_unlabeled = 0.15,  # Left bandwidth for unlabeled data
+  rh_labeled = 0.1,  # Right bandwidth for labeled data
+  rh_unlabeled = 0.15,  # Right bandwidth for unlabeled data
+  num_folds = 10  # Number of CV folds
+)
+
+# Output: 19 x length(time) matrix
+# Rows: Survival estimates (Direct/Left/Right/Combined, SS/ID), SDs, and weights
+print(result)
+See IntrSSL_est_ind.R for detailed parameter descriptions.
+
+Simulation Settings
+The code supports two main settings in main.R:
+
+Setting 1 (Cox model): Generates data with a Cox proportional hazards model, T* ~ Uniform(0, 0.5), and time-dependent covariates via a Poisson process (rate=0.1). Censoring: ~25% left, ~30% right.
+
+Setting 2 (Logistic model): Uses a logistic regression model, T* ~ Uniform(-1, 1), baseline covariate Z ~ Normal(5, 1), and similar covariate/censoring structure.
+
+Additional settings (e.g., varying correlations or censoring rates) are detailed in the supplementary materials (docs/Supplementary.pdf).
+
 
